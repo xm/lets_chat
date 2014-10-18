@@ -10,10 +10,11 @@
       var socket = io();
       socket.on('message', function (data) {
           var $el = $('#messages');
-          var $li = $('<li>' + data.message + '</li>');
+          var $li = $('<li>').addClass("message " + data.type);
+          $li.text(data.message);
 
-          if (data.type === "system") {
-            $li.addClass("system-message");
+          if (data.type === "user") {
+            $li.prepend($("<span>").text(data.user));
           }
 
           $el.append($li);

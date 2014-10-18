@@ -27,9 +27,18 @@ input[type=text] {
   padding: 4px;
 }
 
-.system-message {
+.message.system {
   font-weight: bold;
   color: red;
+}
+
+.message.lobby {
+  color: silver;
+}
+
+.message.user > span {
+  font-weight: bold;
+  margin-right: 8px;
 }
 
 #messages {
