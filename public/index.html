@@ -8,10 +8,15 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
-      socket.on('message_from_server', function (data) {
+      socket.on('message', function (data) {
           var $el = $('#messages');
+          var $li = $('<li>' + data.message + '</li>');
 
-          $el.append('<li>' + data.message + '</li>');
+          if (data.type === "system") {
+            $li.addClass("system-message");
+          }
+
+          $el.append($li);
           $el.animate({
             scrollTop: $el[0].scrollHeight
           }, 250);
@@ -23,7 +28,7 @@
 
           $('#msg').focus();
           var msg = $('#msg').val();
-          socket.emit('message_from_browser', { message: msg });
+          socket.emit("message", { message: msg });
           $('#msg').val('');
           $('#msg').focus();
         });
