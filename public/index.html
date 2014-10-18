@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Let's Chat</title>
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      socket.on('message_from_server', function (data) {
+          $('ul').prepend('<li>' + data.message + '</li>');
+      });
+
+      $(function () {
+        $('button').on('click', function (event) {
+          event.preventDefault();
+
+          $('#msg').focus();
+          var msg = $('#msg').val();
+          socket.emit('message_from_browser', { message: msg });
+          $('#msg').val('');
+          $('#msg').focus();
+        });
+      });
+    </script> 
+  </head>
+  <body>
+  <h1>Let's Chat!</h1>
+  <form action="#">
+    <input type="text" name="text" id="msg">
+    <button type="submit">Do it!</button>
+  </form>
+
+  <ul> </ul>
+  </body>
+</html>
