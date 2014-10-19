@@ -8,6 +8,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
+
       socket.on('message', function (data) {
           var $el = $('#messages');
           var $li = $('<li>').addClass("message " + data.type);
