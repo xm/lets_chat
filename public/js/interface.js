@@ -18,8 +18,8 @@
   Interface.prototype.bindEvents = function() {
     var self = this;
 
-    this.client.on("messageReceived", function (data) {
-      self.addMessage(data.message, data.type);
+    this.client.socket.on("message", function (data) {
+      self.addMessage(data.message, data.type, data.user);
     });
 
     this.$message.on("keydown", function (event) {
@@ -29,9 +29,19 @@
     });
   };
 
-  Interface.prototype.addMessage = function(message, type) {
+  Interface.prototype.addMessage = function(message, type, user) {
     var $li = $("<li>").addClass("message " + type).text(message);
+
+    if (type === "user") {
+      var $span = $("<span>").text(user);
+      $li.prepend($span);
+    }
+
     this.$messageList.append($li);
+
+    this.$messageList.animate({
+      scrollTop: this.$messageList[0].scrollHeight
+    }, 250);
   };
 
   Interface.prototype.sendMessage = function() {
