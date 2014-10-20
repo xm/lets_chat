@@ -29,11 +29,19 @@ input[type=text] {
 
 .message.system {
   font-weight: bold;
-  color: red;
+  color: blue;
 }
 
 .message.lobby {
   color: silver;
+}
+
+.message.error {
+  color: red;
+}
+
+.message.success {
+  color: green;
 }
 
 .message.user > span {

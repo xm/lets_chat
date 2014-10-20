@@ -8,12 +8,7 @@
   <body>
     <div class="wrapper">
       <aside class="sidebar">
-        <ul id="lobby-list">
-          <li>Lobby Name</li>
-          <ul class="lobby-details">
-            <li>User Name</li>
-          </ul>
-        </ul>
+        <ul id="lobby-list"></ul>
       </aside>
 
       <main class="main">
@@ -24,11 +19,13 @@
       </main>
     </div>
   </body>
-  <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="vendor/jquery.js"></script>
   <script src="js/client.js"></script>
   <script src="js/interface.js"></script>
   <script>
-    var chatInterface = new Chat.Interface();
+    $(function () {
+      var chatInterface = new Chat.Interface();
+    });
   </script>
 </html>

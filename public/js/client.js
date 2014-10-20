@@ -7,19 +7,38 @@
     this.socket = socket;
   };
 
-  Client.prototype.sendMessage = function(message) {
-    this.socket.emit("message", { message: message });
+  Client.prototype.processInput = function (input) {
+    if (input.length <= 0) {
+      return;
+    }
+
+    if (input[0] === "/") {
+      var split = input.substr(1).split(" ");
+      this.processCmd(split[0], split.slice(1));
+    } else {
+      this.sendMessage(input);
+    }
   };
 
-  Client.prototype.handleCmd = function(cmd, args) {
+  Client.prototype.processCmd = function (cmd, args) {
     if (cmd === "nick" || cmd === "nickname") {
-      this.changeNick(args[0]);
+      this.sendChangeNicknameReq(args[0]);
+    } else if (cmd === "j" || cmd === "join") {
+      this.sendChangeLobbyReq(args[0]);
     } else {
       console.log("Unrecognized command: '" + cmd + "'");
     }
   };
 
-  Client.prototype.changeNick = function(nick) {
-    this.socket.emit("changeNick", { nick: nick });
+  Client.prototype.sendMessage = function (message) {
+    this.socket.emit("message", { message: message });
+  };
+
+  Client.prototype.sendChangeNicknameReq = function (newNick) {
+    this.socket.emit("changeNicknameReq", { nick: newNick });
+  };
+
+  Client.prototype.sendChangeLobbyReq = function (lobby) {
+    this.socket.emit("changeLobbyReq", { lobby: lobby });
   };
 })();
