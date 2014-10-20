@@ -48,7 +48,13 @@
     var message = this.$message.val();
 
     if (message.length > 0) {
-      this.client.sendMessage(message);
+      if (message[0] === "/") {
+        var split = message.substr(1).split(" ");
+        this.client.handleCmd(split[0], split.slice(1));
+      } else {
+        this.client.sendMessage(message);
+      }
+
       this.$message.val('');
     }
   };
