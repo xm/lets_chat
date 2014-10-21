@@ -37,6 +37,32 @@
       self.buildLobbyList(data.lobbyList);
     });
 
+    this.client.socket.on("userJoinedLobby", function (data) {
+      self.addUserToLobby(data.nick, data.lobby);
+    });
+
+    this.client.socket.on("userLeftLobby", function (data) {
+      var $userEl = self.findLobbyUserEl(data.nick);
+      $userEl.remove();
+
+      var $lobbyDetails = self.findLobbyDetailsEl(data.lobby);
+
+      if ($lobbyDetails.children().length <= 0) {
+        $lobbyDetails.remove();
+        $("li#" + data.lobby).remove();
+      }
+    });
+
+    this.client.socket.on("updateNickname", function (data) {
+      var $userEl = self.findLobbyUserEl(data.oldNick);
+      if ($userEl) {
+        $userEl.text(data.newNick);
+      } else {
+        console.log("updateNickname failed, unable to find $userEl");
+        console.log(data);
+      }
+    });
+
     this.client.socket.on("changeLobbyRes", function (data) {
       self.addMessage(data.message, data.success ? "success" : "error");
     });
@@ -64,18 +90,65 @@
 
   Interface.prototype.buildLobbyList = function (lobbyList) {
     this.$lobbyList.empty();
+
     for (var lobby in lobbyList) {
-      var $liLobby = $("<li>").text(lobby);
-      var $ulDetails = $("<ul>").addClass("lobby-details");
-
-      for (var i = 0, l = lobbyList[lobby].length; i < l; ++i) {
-        var user = lobbyList[lobby][i];
-        var $liUser = $("<li>").text(user);
-        $ulDetails.append($liUser);
-      }
-
-      this.$lobbyList.append($liLobby);
-      this.$lobbyList.append($ulDetails);
+      this.buildLobbyEntry(lobby, lobbyList[lobby]);
     }
+  };
+
+  Interface.prototype.buildLobbyEntry = function (lobby, users) {
+    var $liLobby = this.buildLobbyLi(lobby);
+    var $ulDetails = this.buildLobbyDetails(lobby, users);
+
+    this.$lobbyList.append($liLobby);
+    this.$lobbyList.append($ulDetails);
+  };
+
+  Interface.prototype.buildLobbyLi = function (lobby) {
+    return $("<li>").prop("id", lobby).text(lobby);
+  };
+
+  Interface.prototype.buildLobbyDetails = function (lobby, users) {
+    var $ul = $("<ul>").addClass("lobby-details").prop("id", lobby);
+
+    users.forEach(function (u) {
+      $ul.append(this.buildUserLi(u));
+    }.bind(this));
+
+    return $ul;
+  };
+
+  Interface.prototype.buildUserLi = function (nick) {
+    return $("<li>").text(nick);
+  };
+
+  Interface.prototype.addUserToLobby = function (nick, lobby) {
+    var $userUl = this.findLobbyDetailsEl(lobby);
+
+    if ($userUl.length > 0) {
+      $userUl.append(this.buildUserLi(nick));
+    } else {
+      this.buildLobbyEntry(lobby, [nick]);
+    }
+  };
+
+  Interface.prototype.findLobbyDetailsEl = function (lobby) {
+    return $("ul#" + lobby);
+  };
+
+  Interface.prototype.findLobbyUserEl = function (nickname) {
+    var $liUsers = this.$lobbyList.find("ul > li");
+    var $userEl = null;
+
+    $liUsers.each(function (i, el) {
+      var $el = $(el);
+
+      if ($el.text() === nickname) {
+        $userEl = $el;
+        return;
+      }
+    });
+
+    return $userEl;
   };
 })();
